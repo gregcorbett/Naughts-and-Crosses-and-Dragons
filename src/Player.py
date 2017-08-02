@@ -6,10 +6,12 @@ class Player():
         """Create new Player object."""
         self.marker = marker
 
-    def _place_marker(self, co_ord, board):
+    def _place_marker(self, co_ord, board, marker=None):
         """Place a marker on the board."""
+        if marker is None:
+            marker = self.marker
         if board.grid[co_ord[0]][co_ord[1]] == '.':
-            board.grid[co_ord[0]][co_ord[1]] = self.marker
+            board.grid[co_ord[0]][co_ord[1]] = marker
             return True
         return False
 
