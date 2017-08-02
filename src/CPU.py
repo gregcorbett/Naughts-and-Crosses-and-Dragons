@@ -15,58 +15,59 @@ class CPU(Player):
         """Make a move."""
         print('Player %s is thinking!: ' % self.marker)
 
-        (x_cord, y_cord) = self.minimax(board)
+        (cord, _) = self.max_play(board)
 
-        self._place_marker((x_cord, y_cord), board)
+        self._place_marker(cord, board)
 
-    def minimax(self, board):
-        """Use the minimax algorthim to determine the best move to make."""
+    def max_play(self, board):
+        """
+        Return the 'best' move and it predicted value.
+
+        Where the 'best' move maximises the minimum possible predicted value.
+        """
+        if board.is_there_a_winner() == 'X':
+            # then X has won
+            return (None, -100)
+        elif board.get_possible_moves() == []:
+            # then it is a draw
+            return (None, 0)
+
         moves = board.get_possible_moves()
         best_move = moves[0]
         best_score = float('-inf')
+
         for move in moves:
             clone_state = copy.deepcopy(board)
             self._place_marker(move, clone_state, 'O')
-            score = self.min_play(clone_state)
+            (_, score) = self.min_play(clone_state)
             if score > best_score:
+                best_score = score
                 best_move = move
-                best_score = score
 
-        return best_move
-
-    def max_play(self, board):
-        """Helper method for minimax."""
-        if board.is_there_a_winner() == 'X':
-            # then X has won
-            return -100
-        elif board.get_possible_moves() == []:
-            # then it is a draw
-            return 0
-
-        best_score = float('-inf')
-        for move in board.get_possible_moves():
-            clone_state = copy.deepcopy(board)
-            self._place_marker(move, clone_state, 'O')
-            score = self.min_play(clone_state)
-            if score > best_score:
-                best_score = score
-
-        return best_score
+        return (best_move, best_score)
 
     def min_play(self, board):
-        """Helper method for minimax."""
+        """
+        Return the 'best' move and it predicted value.
+
+        Where the 'best' move minimises the maximum possible predicted value.
+        """
         if board.is_there_a_winner() == 'O':
             # then O has won
-            return 100
+            return (None, 100)
         elif board.get_possible_moves() == []:
-            return 0
+            return (None, 0)
 
+        moves = board.get_possible_moves()
+        best_move = moves[0]
         best_score = float('inf')
-        for move in board.get_possible_moves():
+
+        for move in moves:
             clone_state = copy.deepcopy(board)
             self._place_marker(move, clone_state, 'X')
-            score = self.max_play(clone_state)
+            (_, score) = self.max_play(clone_state)
             if score < best_score:
                 best_score = score
+                best_move = move
 
-        return best_score
+        return (best_move, best_score)
