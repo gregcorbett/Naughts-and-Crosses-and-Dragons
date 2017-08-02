@@ -20,3 +20,5 @@ class Human(Player):
             co_ord = make_tuple(co_ord_input)
 
             moved = self._place_marker(co_ord, board)
+            
+        return co_ord

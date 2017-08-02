@@ -15,11 +15,11 @@ class CPU(Player):
         """Make a move."""
         print('Player %s is thinking!: ' % self.marker)
 
-        (cord, _) = self.max_play(board)
+        (cord, _) = self.max_play(board, float('-inf'), float('inf'))
 
         self._place_marker(cord, board)
 
-    def max_play(self, board):
+    def max_play(self, board, alpha, beta):
         """
         Return the 'best' move and it predicted value.
 
@@ -39,14 +39,17 @@ class CPU(Player):
         for move in moves:
             clone_state = copy.deepcopy(board)
             self._place_marker(move, clone_state, 'O')
-            (_, score) = self.min_play(clone_state)
+            (_, score) = self.min_play(clone_state, alpha, beta)
+            alpha = max(alpha, best_score)
+            if beta <= alpha:
+                break
             if score > best_score:
                 best_score = score
                 best_move = move
 
         return (best_move, best_score)
 
-    def min_play(self, board):
+    def min_play(self, board, alpha, beta):
         """
         Return the 'best' move and it predicted value.
 
@@ -65,7 +68,10 @@ class CPU(Player):
         for move in moves:
             clone_state = copy.deepcopy(board)
             self._place_marker(move, clone_state, 'X')
-            (_, score) = self.max_play(clone_state)
+            (_, score) = self.max_play(clone_state, alpha, beta)
+            beta = min(beta, best_score)
+            if beta <= alpha:
+                break
             if score < best_score:
                 best_score = score
                 best_move = move
