@@ -20,6 +20,15 @@ class Board:
             print()
         print()
 
+    def __deepcopy__(self, memodict=None):
+        """Override default deepcopy behaviour for Board objects."""
+        copy_board = Board(self.height, self.width, self.win_condition)
+        for x_cord in range(self.width):
+            for y_cord in range(self.height):
+                copy_board.grid[x_cord][y_cord] = self.grid[x_cord][y_cord]
+        return copy_board
+
+
     def get_possible_moves(self):
         """Return a list of co-ordinates that are free."""
         possible_moves = []
