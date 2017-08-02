@@ -15,14 +15,24 @@ def main():
     while True:
         player_1.move(board)
         board.display()
-        if player_1.has_won(board):
-            print('Player %s has won!' % player_1.marker)
+
+        winner = board.is_there_a_winner()
+        if winner == player_1.marker:
+            print('Player %s has won!' % winner)
+            break
+        elif winner == '-':
+            print('No winners.')
             break
 
         player_2.move(board)
         board.display()
-        if player_2.has_won(board):
-            print('Player %s has won!' % player_2.marker)
+
+        winner = board.is_there_a_winner()
+        if winner == player_2.marker:
+            print('Player %s has won!' % winner)
+            break
+        elif winner == '-':
+            print('No winners.')
             break
 
 if __name__ == '__main__':
