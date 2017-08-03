@@ -79,16 +79,12 @@ class Board:
 
         # Check diagonally (SW)
         for y_cord in range(self.height - self.win_condition + 1):
-            for x_cord in range(self.width):
+            for x_cord in range(self.win_condition - 1, self.height):
                 line_start = self.grid[x_cord][y_cord]
                 if line_start == '.':
                     continue
                 for n_cord in range(1, self.win_condition):
-                    if x_cord-n_cord < 0:
-                        # then don't check as you will be wrapping
-                        # arround the board
-                        break
-                    elif self.grid[x_cord-n_cord][y_cord+n_cord] != line_start:
+                    if self.grid[x_cord-n_cord][y_cord+n_cord] != line_start:
                         break
                     elif n_cord == (self.win_condition - 1):
                         return line_start
