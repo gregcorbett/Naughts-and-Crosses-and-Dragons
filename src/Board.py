@@ -29,6 +29,13 @@ class Board:
         return copy_board
 
 
+    def are_there_possible_moves(self):
+        for y_cord in range(self.height):
+            for x_cord in range(self.width):
+                if self.grid[x_cord][y_cord] == '.':
+                    return True
+        return False
+
     def get_possible_moves(self):
         """Return a list of co-ordinates that are free."""
         possible_moves = []
@@ -91,7 +98,7 @@ class Board:
 
         # There are no winners!
         # Check if the game is over
-        if self.get_possible_moves() == []:
+        if not self.are_there_possible_moves():
             return '-'
 
         # No winners but the game is not over!
