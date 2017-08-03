@@ -3,12 +3,12 @@
 class Board:
     """This class represents the Game 'Board'."""
 
-    def __init__(self, height=18, width=18, win_condition=3):
+    def __init__(self, width=18, height=18, win_condition=3):
         """Create a new 'Board'."""
         self.height = height
         self.width = width
         self.win_condition = win_condition
-        self.grid = [['.' for x in range(self.width)] for y in range(self.height)]
+        self.grid = [['.' for x in range(self.height)] for y in range(self.width)]
 
     def display(self):
         """Display the 'Board'."""
