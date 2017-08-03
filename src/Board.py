@@ -86,7 +86,7 @@ class Board:
 
         # Check diagonally (SW)
         for y_cord in range(self.height - self.win_condition + 1):
-            for x_cord in range(self.win_condition - 1, self.height):
+            for x_cord in range(self.win_condition - 1, self.width):
                 line_start = self.grid[x_cord][y_cord]
                 if line_start == '.':
                     continue

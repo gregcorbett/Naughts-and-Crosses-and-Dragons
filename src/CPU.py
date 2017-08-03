@@ -66,7 +66,7 @@ class CPU(Player):
 
         # Check diagonally (SW)
         for y_cord in range(board.height - board.win_condition + 1):
-            for x_cord in range(board.win_condition - 1, board.height):
+            for x_cord in range(board.win_condition - 1, board.width):
                 line_start = board.grid[x_cord][y_cord]
                 if line_start != marker:
                     continue
