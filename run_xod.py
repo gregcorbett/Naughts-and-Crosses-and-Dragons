@@ -1,6 +1,7 @@
 """This file will run Naughts and Crosses and Dragons (XOD)."""
 
 from src.Board import Board
+from src.Dragon import Dragon
 from src.Human import Human
 from src.CPU import CPU
 
@@ -10,6 +11,8 @@ def main():
 
     player_1 = CPU('X', 'O')
     player_2 = CPU('O', 'X')
+
+    sean = Dragon()
 
     board.display()
     while True:
@@ -24,6 +27,9 @@ def main():
             print('No winners.')
             break
 
+        sean.move(board)
+        board.display()
+
         player_2.move(board)
         board.display()
 
@@ -34,6 +40,10 @@ def main():
         elif winner == '-':
             print('No winners.')
             break
+
+        sean.move(board)
+        board.display()
+
 
 if __name__ == '__main__':
     main()
