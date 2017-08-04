@@ -8,8 +8,8 @@ def main():
     """Run the XOD game loop."""
     board = Board()
 
-    player_1 = Human('X')
-    player_2 = CPU('O')
+    player_1 = CPU('X', 'O')
+    player_2 = CPU('O', 'X')
 
     board.display()
     while True:

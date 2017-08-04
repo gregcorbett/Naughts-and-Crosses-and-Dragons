@@ -7,15 +7,16 @@ from src.Player import Player
 class CPU(Player):
     """This class represents a CPU player."""
 
-    def __init__(self, marker):
+    def __init__(self, marker, opponent_marker):
         """Create a new CPU player."""
         super().__init__(marker)
+        self.opponent_marker = opponent_marker
 
     def move(self, board):
         """Make a move."""
         print('Player %s is thinking!: ' % self.marker)
 
-        (cord, _) = self.max_play(board, float('-inf'), float('inf'), 3)
+        (cord, _) = self.max_play(board, float('-inf'), float('inf'), 1)
 
         self._place_marker(cord, board)
 
@@ -86,8 +87,8 @@ class CPU(Player):
 
         Where the 'best' move maximises the minimum possible predicted value.
         """
-        if board.is_there_a_winner() == 'X':
-            # then X has won
+        if board.is_there_a_winner() == self.opponent_marker:
+            # then I have lost
             return (None, -100)
         elif board.get_possible_moves() == []:
             # then it is a draw
@@ -95,7 +96,7 @@ class CPU(Player):
         elif depth < 0:
             # Rather than do minimax to determine the best move
             # use a heuristic
-            return (None, self.evaluate_incomplete_board(board, 'O'))
+            return (None, self.evaluate_incomplete_board(board, self.marker))
 
         moves = board.get_possible_moves()
         best_move = moves[0]
@@ -103,7 +104,7 @@ class CPU(Player):
 
         for move in moves:
             clone_state = copy.deepcopy(board)
-            self._place_marker(move, clone_state, 'O')
+            self._place_marker(move, clone_state, self.marker)
             (_, score) = self.min_play(clone_state, alpha, beta, depth - 1)
             alpha = max(alpha, best_score)
             if beta <= alpha:
@@ -120,15 +121,15 @@ class CPU(Player):
 
         Where the 'best' move minimises the maximum possible predicted value.
         """
-        if board.is_there_a_winner() == 'O':
-            # then O has won
+        if board.is_there_a_winner() == self.marker:
+            # then I have won
             return (None, 100)
         elif board.get_possible_moves() == []:
             return (None, 0)
         elif depth < 0:
             # Rather than do minimax to determine the best move
             # use a heuristic
-            return (None, - self.evaluate_incomplete_board(board, 'X'))
+            return (None, - self.evaluate_incomplete_board(board, self.opponent_marker))
 
         moves = board.get_possible_moves()
         best_move = moves[0]
@@ -136,7 +137,7 @@ class CPU(Player):
 
         for move in moves:
             clone_state = copy.deepcopy(board)
-            self._place_marker(move, clone_state, 'X')
+            self._place_marker(move, clone_state, self.opponent_marker)
             (_, score) = self.max_play(clone_state, alpha, beta, depth - 1)
             beta = min(beta, best_score)
             if beta <= alpha:
