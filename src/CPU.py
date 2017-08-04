@@ -20,12 +20,18 @@ class CPU(Player):
 
         self._place_marker(cord, board)
 
-        print("Heuristic: %s", self.evaluate_incomplete_board(board, self.marker))
-
     def evaluate_incomplete_board(self, board, marker):
         """Return a heursitic value of the given Board."""
-        max_line = 0
+        heursitic = 0
         return_n = 0
+        moves_made = 0
+
+        # Count the moves made to normalize heursitic
+        for y_cord in range(board.height):
+            for x_cord in range(board.width):
+                if board.grid[x_cord][y_cord] != '.':
+                    moves_made = moves_made + 1
+
         # Check horizontally
         for y_cord in range(board.height):
             for x_cord in range(board.width - board.win_condition + 1):
@@ -37,7 +43,7 @@ class CPU(Player):
                         break
                     return_n = n_cord
 
-                max_line = max(max_line, return_n + 1)
+                heursitic = heursitic + return_n + 1
 
         # Check vertically
         for y_cord in range(board.height - board.win_condition + 1):
@@ -50,7 +56,7 @@ class CPU(Player):
                         break
                     return_n = n_cord
 
-                max_line = max(max_line, return_n + 1)
+                heursitic = heursitic + return_n + 1
 
         # Check diagonally (SE) # correct!
         for y_cord in range(board.height - board.win_condition +1):
@@ -63,7 +69,7 @@ class CPU(Player):
                         break
                     return_n = n_cord
 
-                max_line = max(max_line, return_n + 1)
+                heursitic = heursitic + return_n + 1
 
         # Check diagonally (SW)
         for y_cord in range(board.height - board.win_condition + 1):
@@ -76,10 +82,10 @@ class CPU(Player):
                         break
                     return_n = n_cord
 
+                heursitic = heursitic + return_n + 1
 
-                max_line = max(max_line, return_n + 1)
-
-        return max_line
+        # return heursitic divided by 4 as we count each space 4 times
+        return heursitic / (4 * moves_made)
 
     def max_play(self, board, alpha, beta, depth):
         """
