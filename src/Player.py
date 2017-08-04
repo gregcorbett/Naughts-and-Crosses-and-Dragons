@@ -6,87 +6,13 @@ class Player():
         """Create new Player object."""
         self.marker = marker
 
-    def _place_marker(self, co_ord, board):
+    def _place_marker(self, co_ord, board, marker=None):
         """Place a marker on the board."""
+        if marker is None:
+            marker = self.marker
         if board.grid[co_ord[0]][co_ord[1]] == '.':
-            board.grid[co_ord[0]][co_ord[1]] = self.marker
+            board.grid[co_ord[0]][co_ord[1]] = marker
             return True
-        return False
-
-    def has_won(self, board):
-        """Check if the Player has won the given Board."""
-        # Check horizontally
-        for y_cord in range(board.height - board.win_condition):
-            for x_cord in range(board.width - board.win_condition):
-                line_start = board.grid[x_cord][y_cord]
-                if line_start is not self.marker:
-                    continue
-                for n_cord in range(1, board.win_condition):
-                    if board.grid[x_cord+n_cord][y_cord] != self.marker:
-                        break
-                    elif n_cord == (board.win_condition - 1):
-                        return True
-
-        # Check vertically
-        for y_cord in range(board.height - board.win_condition):
-            for x_cord in range(board.width - board.win_condition):
-                line_start = board.grid[x_cord][y_cord]
-                if line_start is not self.marker:
-                    continue
-                for n_cord in range(1, board.win_condition):
-                    if board.grid[x_cord][y_cord+n_cord] != self.marker:
-                        break
-                    elif n_cord == (board.win_condition - 1):
-                        return True
-
-        # Check diagonally (one way)
-        for y_cord in range(board.height - board.win_condition):
-            for x_cord in range(board.width - board.win_condition):
-                line_start = board.grid[x_cord][y_cord]
-                if line_start is not self.marker:
-                    continue
-                for n_cord in range(1, board.win_condition):
-                    if board.grid[x_cord+n_cord][y_cord+n_cord] != self.marker:
-                        break
-                    elif n_cord == (board.win_condition - 1):
-                        return True
-
-        # Check diagonally (one way)
-        for y_cord in range(board.height - board.win_condition):
-            for x_cord in range(board.width - board.win_condition):
-                line_start = board.grid[x_cord][y_cord]
-                if line_start is not self.marker:
-                    continue
-                for n_cord in range(1, board.win_condition):
-                    if board.grid[x_cord-n_cord][y_cord-n_cord] != self.marker:
-                        break
-                    elif n_cord == (board.win_condition - 1):
-                        return True
-
-        # Check diagonally (one way)
-        for y_cord in range(board.height - board.win_condition):
-            for x_cord in range(board.width - board.win_condition):
-                line_start = board.grid[x_cord][y_cord]
-                if line_start is not self.marker:
-                    continue
-                for n_cord in range(1, board.win_condition):
-                    if board.grid[x_cord+n_cord][y_cord-n_cord] != self.marker:
-                        break
-                    elif n_cord == (board.win_condition - 1):
-                        return True
-
-        # Check diagonally (one way)
-        for y_cord in range(board.height - board.win_condition):
-            for x_cord in range(board.width - board.win_condition):
-                line_start = board.grid[x_cord][y_cord]
-                if line_start is not self.marker:
-                    continue
-                for n_cord in range(1, board.win_condition):
-                    if board.grid[x_cord-n_cord][y_cord+n_cord] != self.marker:
-                        break
-                    elif n_cord == (board.win_condition - 1):
-                        return True
-        # You have not won
         return False
 
     def move(self, board):
