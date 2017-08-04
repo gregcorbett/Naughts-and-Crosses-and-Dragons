@@ -89,7 +89,7 @@ class CPU(Player):
         """
         if board.is_there_a_winner() == self.opponent_marker:
             # then I have lost
-            return (None, -100)
+            return (None, float('-inf'))
         elif board.get_possible_moves() == []:
             # then it is a draw
             return (None, 0)
@@ -123,7 +123,7 @@ class CPU(Player):
         """
         if board.is_there_a_winner() == self.marker:
             # then I have won
-            return (None, 100)
+            return (None, float('inf'))
         elif board.get_possible_moves() == []:
             return (None, 0)
         elif depth < 0:
