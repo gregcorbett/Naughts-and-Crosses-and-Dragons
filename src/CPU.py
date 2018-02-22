@@ -1,8 +1,7 @@
-"""This file contains the CPU (player) class."""
-
+"""This file contains the CPU player class."""
 import copy
-
 from src.Player import Player
+
 
 class CPU(Player):
     """This class represents a CPU player."""
@@ -11,107 +10,78 @@ class CPU(Player):
         """Create a new CPU player."""
         super().__init__(marker)
         self.opponent_marker = opponent_marker
+        self.search_depth_limit = 2
 
     def move(self, board):
         """Make a move."""
-        print('Player %s is thinking!: ' % self.marker)
+        print('Player %s is thinking... ' % self.marker)
 
-        (cord, _) = self.max_play(board, float('-inf'), float('inf'), 1)
+        (cord, _) = self.max_play(board, float('-inf'), float('inf'))
 
         self._place_marker(cord, board)
 
-    def evaluate_incomplete_board(self, board, marker):
+    def evaluate_incomplete_board(self, board):
         """Return a heursitic value of the given Board."""
         heursitic = 0
-        return_n = 0
-        moves_made = 0
 
-        # Count the moves made to normalize heursitic
-        for y_cord in range(board.height):
-            for x_cord in range(board.width):
-                if board.grid[x_cord][y_cord] != '.':
-                    moves_made = moves_made + 1
+        # Currently, the heuristic is quite simple and is the sum of the
+        # longest line of this player's symbols (in each of the four
+        # directions) minus the same for value for your opponent's marker.
 
         # Check horizontally
-        for y_cord in range(board.height):
-            for x_cord in range(board.width - board.win_condition + 1):
-                line_start = board.grid[x_cord][y_cord]
-                if line_start != marker:
-                    continue
-                for n_cord in range(1, board.win_condition):
-                    if board.grid[x_cord+n_cord][y_cord] != line_start:
-                        break
-                    return_n = n_cord
-
-                heursitic = heursitic + return_n + 1
+        heursitic = heursitic + self.max_in_row(board, self.marker)
+        heursitic = heursitic - self.max_in_row(board, self.opponent_marker)
 
         # Check vertically
-        for y_cord in range(board.height - board.win_condition + 1):
-            for x_cord in range(board.width):
-                line_start = board.grid[x_cord][y_cord]
-                if line_start != marker:
-                    continue
-                for n_cord in range(1, board.win_condition):
-                    if board.grid[x_cord][y_cord+n_cord] != line_start:
-                        break
-                    return_n = n_cord
+        heursitic = heursitic + self.max_in_column(board, self.marker)
+        heursitic = heursitic - self.max_in_column(board, self.opponent_marker)
 
-                heursitic = heursitic + return_n + 1
-
-        # Check diagonally (SE) # correct!
-        for y_cord in range(board.height - board.win_condition +1):
-            for x_cord in range(board.width - board.win_condition +1):
-                line_start = board.grid[x_cord][y_cord]
-                if line_start != marker:
-                    continue
-                for n_cord in range(1, board.win_condition):
-                    if board.grid[x_cord+n_cord][y_cord+n_cord] != line_start:
-                        break
-                    return_n = n_cord
-
-                heursitic = heursitic + return_n + 1
+        # Check diagonally (SE)
+        heursitic = heursitic + self.max_in_nwse_diagonal(board,
+                                                          self.marker)
+        heursitic = heursitic - self.max_in_nwse_diagonal(board,
+                                                          self.opponent_marker)
 
         # Check diagonally (SW)
-        for y_cord in range(board.height - board.win_condition + 1):
-            for x_cord in range(board.win_condition - 1, board.width):
-                line_start = board.grid[x_cord][y_cord]
-                if line_start != marker:
-                    continue
-                for n_cord in range(1, board.win_condition):
-                    if board.grid[x_cord-n_cord][y_cord+n_cord] != line_start:
-                        break
-                    return_n = n_cord
+        heursitic = heursitic + self.max_in_nesw_diagonal(board,
+                                                          self.marker)
+        heursitic = heursitic - self.max_in_nesw_diagonal(board,
+                                                          self.opponent_marker)
 
-                heursitic = heursitic + return_n + 1
+        return heursitic
 
-        # return heursitic divided by 4 as we count each space 4 times
-        return heursitic / (4 * moves_made)
-
-    def max_play(self, board, alpha, beta, depth):
+    def max_play(self, board, alpha, beta, depth=1):
         """
         Return the 'best' move and it predicted value.
 
         Where the 'best' move maximises the minimum possible predicted value.
         """
-        if board.is_there_a_winner() == self.opponent_marker:
-            # then I have lost
-            return (None, float('-inf'))
-        elif board.get_possible_moves() == []:
+        moves = self.get_possible_moves(board)
+
+        if moves == []:
             # then it is a draw
             return (None, 0)
-        elif depth < 0:
-            # Rather than do minimax to determine the best move
-            # use a heuristic
-            return (None, self.evaluate_incomplete_board(board, self.marker))
 
-        moves = board.get_possible_moves()
         best_move = moves[0]
         best_score = float('-inf')
 
         for move in moves:
             clone_state = copy.deepcopy(board)
             self._place_marker(move, clone_state, self.marker)
-            (_, score) = self.min_play(clone_state, alpha, beta, depth - 1)
+
+            if self.has_marker_won(clone_state, self.marker):
+                # Then I have won! Huzzah!
+                # But factor in how far down
+                # the tree the win is.
+                score = 1000000 / depth
+            elif depth > self.search_depth_limit:
+                # Rather than do minimax to determine the best move,
+                # just use a heuristic.
+                score = self.evaluate_incomplete_board(clone_state)
+            else:
+                # Use minimax recursively to determine the best move.
+                (_, score) = self.min_play(clone_state, alpha, beta, depth + 1)
+
             alpha = max(alpha, best_score)
             if beta <= alpha:
                 break
@@ -121,31 +91,40 @@ class CPU(Player):
 
         return (best_move, best_score)
 
-    def min_play(self, board, alpha, beta, depth):
+    def min_play(self, board, alpha, beta, depth=1):
         """
         Return the 'best' move and it predicted value.
 
         Where the 'best' move minimises the maximum possible predicted value.
         """
-        if board.is_there_a_winner() == self.marker:
-            # then I have won
-            return (None, float('inf'))
-        elif board.get_possible_moves() == []:
-            return (None, 0)
-        elif depth < 0:
-            # Rather than do minimax to determine the best move
-            # use a heuristic
-            return (None, - self.evaluate_incomplete_board(board, self.opponent_marker))
+        moves = self.get_possible_moves(board)
 
-        moves = board.get_possible_moves()
+        if moves == []:
+            # then it is a draw
+            return (None, 0)
+
         best_move = moves[0]
         best_score = float('inf')
 
         for move in moves:
             clone_state = copy.deepcopy(board)
             self._place_marker(move, clone_state, self.opponent_marker)
-            (_, score) = self.max_play(clone_state, alpha, beta, depth - 1)
+
+            if self.has_marker_won(clone_state, self.opponent_marker):
+                # Then I have lost! Booooooo!
+                # But factor in how far down
+                # the tree the loss is.
+                score = -1000000 / depth
+            elif depth > self.search_depth_limit:
+                # Rather than do minimax to determine the best move,
+                # just use a heuristic.
+                score = - self.evaluate_incomplete_board(clone_state)
+            else:
+                # Use minimax recursively to determine the best move.
+                (_, score) = self.max_play(clone_state, alpha, beta, depth + 1)
+
             beta = min(beta, best_score)
+
             if beta <= alpha:
                 break
             if score < best_score:
