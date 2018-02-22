@@ -28,7 +28,7 @@ class Board:
 
     def __deepcopy__(self, memodict=None):
         """Override default deepcopy behaviour for Board objects."""
-        copy_board = Board(self.height, self.width, self.win_condition)
+        copy_board = Board(self.width, self.height, self.win_condition)
         for x_cord in range(self.width):
             for y_cord in range(self.height):
                 copy_board.grid[x_cord][y_cord] = self.grid[x_cord][y_cord]
