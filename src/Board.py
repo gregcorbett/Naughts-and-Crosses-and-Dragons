@@ -11,14 +11,20 @@ class Board:
         self.grid = [['.' for x in range(self.height)] for y in range(self.width)]
 
     def display(self):
-        """Display the 'Board'."""
+        """Display the Board."""
+        print(self.to_string())
+        print()
+
+    def to_string(self):
+        """Convert the Board to a string."""
+        output = '\n'
         for y_cord in range(self.height):
             for x_cord in range(self.width):
-                print(self.grid[x_cord][y_cord], end='')
+                output = output + self.grid[x_cord][y_cord]
                 if x_cord != self.width-1:
-                    print(' ', end='')
-            print()
-        print()
+                    output = output + " "
+            output = output + "\n"
+        return output
 
     def __deepcopy__(self, memodict=None):
         """Override default deepcopy behaviour for Board objects."""
