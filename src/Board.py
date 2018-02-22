@@ -3,7 +3,7 @@
 class Board:
     """This class represents the Game 'Board'."""
 
-    def __init__(self, width=18, height=18, win_condition=3):
+    def __init__(self, width, height, win_condition):
         """Create a new 'Board'."""
         self.height = height
         self.width = width
