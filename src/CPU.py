@@ -1,8 +1,7 @@
-"""This file contains the CPU (player) class."""
-
+"""This file contains the CPU player class."""
 import copy
-
 from src.Player import Player
+
 
 class CPU(Player):
     """This class represents a CPU player."""
@@ -15,9 +14,9 @@ class CPU(Player):
 
     def move(self, board):
         """Make a move."""
-        print('Player %s is thinking!: ' % self.marker)
+        print('Player %s is thinking... ' % self.marker)
 
-        (cord, _) = self.max_play(board, float('-inf'), float('inf'), 1)
+        (cord, _) = self.max_play(board, float('-inf'), float('inf'))
 
         self._place_marker(cord, board)
 

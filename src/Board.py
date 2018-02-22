@@ -1,4 +1,5 @@
-"""This file contains the board class."""
+"""This file contains the Board class."""
+
 
 class Board:
     """This class represents the Game 'Board'."""
@@ -8,7 +9,9 @@ class Board:
         self.height = height
         self.width = width
         self.win_condition = win_condition
-        self.grid = [['.' for x in range(self.height)] for y in range(self.width)]
+        self.grid = [['.'
+                      for x in range(self.height)]
+                     for y in range(self.width)]
 
     def display(self):
         """Display the Board."""

@@ -1,5 +1,6 @@
 """This file contains the Player class."""
 
+
 class Player():
     """A Base class to be extended to create specifc player types."""
     def __init__(self, marker):
