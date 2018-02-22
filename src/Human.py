@@ -17,8 +17,11 @@ class Human(Player):
         while not moved:
             co_ord_input = input('Player %s, your move!: ' % self.marker)
 
-            co_ord = make_tuple(co_ord_input)
+            try:
+                co_ord = make_tuple(co_ord_input)
+                moved = self._place_marker(co_ord, board)
+            except (SyntaxError, TypeError, ValueError, IndexError) as error:
+                print(error)
+                continue
 
-            moved = self._place_marker(co_ord, board)
-            
         return co_ord
